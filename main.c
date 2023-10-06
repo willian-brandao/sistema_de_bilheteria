@@ -47,6 +47,8 @@ void verificar_poltronas_disponiveis( int horario, int*poltronas){
     }
 }
 
+// função criada para alocar os passageiros nos horarios disponiveis usando mutex
+
 bool reservar_passagem(int horario, int poltrona){
     pthread_mutex_lock(mutex);
     if(poltronas_disponiveis[horario][ poltrona - 1] == 1){
@@ -59,6 +61,7 @@ bool reservar_passagem(int horario, int poltrona){
     }
 } 
 
+//função para gerar os passageiros que irão ocupar os lugares vagos
 void *gerador_de_passageiros( void *arg){
 
     int n = *(int *)arg;
@@ -84,6 +87,23 @@ void *gerador_de_passageiros( void *arg){
     pthread_exit(NULL);
 }
 main(){
+     
+     int n;
+     printf("Pasageiros: ");
+     scanf("%d", &n);
 
+    //chamada da função que aloca o espaço para as poltronas disponíveis
+     inicializar_poltronas_disponiveis(); 
+    
+    pthread_t threads[n];
+
+    for( int i = 0; i < n; i++){
+        pthread_create(&threads[i], NULL, gerador_de_passageiros, &n);
+    }
+
+    for( int i = 0; i < n; i++){
+        pthread_join(threads[i], NULL);
+    }
+    return 0;
 }
 
